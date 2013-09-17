@@ -33,6 +33,7 @@ argmap['x02'] = 'netmask'
 argmap['x06'] = 'cust_id'
 argmap['x07'] = 'options'
 
+
 def main():
     """ Main function of the program """
     arguments = parse_arguments()
@@ -42,8 +43,11 @@ def main():
     options = arguments.get('options') or None
     hosts = okconfig.network_scan.get_all_hosts("%s/%s" % (network, netmask))
     result = []
+
+    ports = portrange_to_ports(options)
     for i in hosts:
         host = {}
+        host['ports'] = {}
         result.append(host)
         i.check()
         host['ipaddress'] = i.ipaddress
@@ -54,9 +58,37 @@ def main():
         host['port80'] = i.port80
         host['cust_id'] = cust_id
         host['options'] = options
+        if ports:
+            for port in ports:
+                host['ports'][port] = okconfig.network_scan.check_tcp(i.ipaddress,port=port, timeout=2)
 
-    success("network scan completed", json_data={'scan_results':result})
+    success("network scan completed", json_data={'scan_results': result})
 
+
+def portrange_to_ports(string):
+    """ Takes string as in input that indicates portrange and returns all ports in that range
+
+    Example:
+    >>> portrange_to_ports("20-25")
+    [20, 21, 22, 23, 24, 25]
+    >>> portrange_to_ports("20-25,15,6-7")
+    [20, 21, 22, 23, 24, 25, 15, 6, 7]
+    """
+    # split all the comma seperated ones
+    result = []
+    if not string:
+        return result
+    tmp = string.split(',')
+    for portrange in tmp:
+        if '-' in portrange:
+            start,end = portrange.split('-')
+            start,end = int(start), int(end)
+            for i in range(start,end+1):
+                result.append(i)
+        elif portrange.isdigit():
+            port = int(portrange)
+            result.append(port)
+    return result
 
 def error(message, json_data=None):
     """ Prints out a json error to the screen and exits the program """
@@ -104,7 +136,7 @@ def parse_arguments(*args):
 
 def usage():
     """ Print usage of the program and exit """
-    print "Usage: %s x01=network x02=netmask x06=cust_id x07=option"  % sys.argv[0]
+    print "Usage: %s x01=network x02=netmask x06=cust_id x07=option" % sys.argv[0]
     print ""
     print "Example: %s x01=127.0.0.0 x02=25 x06=customer1" % sys.argv[0]
     print """
