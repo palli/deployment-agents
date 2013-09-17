@@ -37,9 +37,9 @@ argmap['x04'] = 'host'
 def main():
     """ Main function of the program """
     arguments = parse_arguments()
-    remote_host = arguments.get('host') or error('remote host was not provided')
-    username = arguments.get('username') or error('username was not provided')
-    password = arguments.get('password') or error('password was not provided')
+    remote_host = arguments.get('host') or usage('remote host was not provided')
+    username = arguments.get('username') or usage('username was not provided')
+    password = arguments.get('password') or usage('password was not provided')
     status, stdout, stderr = okconfig.install_okagent(
         remote_host=remote_host,
         username=username,
@@ -95,8 +95,12 @@ def parse_arguments(*args):
     return result
 
 
-def usage():
+def usage(message=None):
     """ Print usage of the program and exit """
+    if message is not None:
+        print message
+        print ""
+
     print "Usage: %s x01=USERNAME x02=PASSWORD x03=? x04=REMOTE_HOST" % sys.argv[0]
     print """
 x01: Username used to log into remote server
