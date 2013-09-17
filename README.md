@@ -102,20 +102,20 @@ network_scan usage
 Here are all the valid arguments for network_scan:
 ```
 $ ./network_scan.py --help
-Usage: ./network_scan.py x01=network x02=netmask x06=cust_id x07=option
+Usage: ./network_scan.py x01=network x02=netmask x06=cust_id x07=portrange
 
 Example: ./network_scan.py x01=127.0.0.0 x02=25 x06=customer1
 
 x01: Network to scan (example 10.0.0.0)
 x02: Netmask (example: 24)
 x06: Arbitrary string, not used by the program
-x07: Option to pass into network scan, not used by the program
+x07: Portrange to scan. Example: 20-25,80,443,5666
 ```
 
 Here is an example usage of the network scan script scanning 127.0.0.1
 
 ```
-$ ./network_scan.py x01=127.0.0.1 x02=32 x06=customer_id x07=options
+$ ./network_scan.py x01=127.0.0.1 x02=32 x06=customer_id x07=20-23,80,443
 {
     "message": "network scan completed",
     "scan_results": [
@@ -124,9 +124,17 @@ $ ./network_scan.py x01=127.0.0.1 x02=32 x06=customer_id x07=options
             "hostname": "localhost.localdomain",
             "port80": "yes",
             "platform": "Linux",
+            "options": "20-23,80,443",
             "cust_id": "customer_id",
             "ipaddress": "127.0.0.1",
-            "options": "options",
+            "ports": {
+                "80": true,
+                "20": false,
+                "21": true,
+                "22": true,
+                "23": false,
+                "443": false
+            },
             "ismonitored": true
         }
     ],
