@@ -1,5 +1,6 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 # Copyright 2013, Pall Sigurdsson <palli@opensource.is>
 #
 # This script is free software: you can redistribute it and/or modify
@@ -115,3 +116,5 @@ if __name__ == '__main__':
         main()
     except paramiko.AuthenticationException:
         error("Authentication failed")
+    except Exception, e:
+        error(str(e), json_data={'error_type': type(e)})
