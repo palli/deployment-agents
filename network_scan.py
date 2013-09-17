@@ -37,8 +37,8 @@ argmap['x07'] = 'options'
 def main():
     """ Main function of the program """
     arguments = parse_arguments()
-    network = arguments.get('network') or error('network was not provided')
-    netmask = arguments.get('netmask') or error('netmask was not provided')
+    network = arguments.get('network') or usage('network was not provided')
+    netmask = arguments.get('netmask') or usage('netmask was not provided')
     cust_id = arguments.get('cust_id') or None
     options = arguments.get('options') or None
     hosts = okconfig.network_scan.get_all_hosts("%s/%s" % (network, netmask))
@@ -134,8 +134,12 @@ def parse_arguments(*args):
     return result
 
 
-def usage():
+def usage(message=None):
     """ Print usage of the program and exit """
+    if message is not None:
+        print message
+        print ""
+
     print "Usage: %s x01=network x02=netmask x06=cust_id x07=option" % sys.argv[0]
     print ""
     print "Example: %s x01=127.0.0.0 x02=25 x06=customer1" % sys.argv[0]
