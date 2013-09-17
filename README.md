@@ -14,8 +14,9 @@ Files in this directory
 Prerequisites
 =============
 
-The nagios server will need the following packages installed:
+The nagios server will need the following dependencies:
 
+* Fully functional RHEL6 or Centos6 server
 * okconfig
 * pynag
 * nagios-plugins-fping
@@ -28,6 +29,27 @@ Requires: pynag python-paramiko winexe
 Requires: nagios nagios-plugins-nrpe  nagios-plugins-ping nagios-plugins-ssh
 Requires: nagios-okplugin-apc nagios-okplugin-brocade nagios-okplugin-mailblacklist
 Requires: nagios-okplugin-check_disks nagios-okplugin-check_time nagios-plugins-fping
+```
+
+Install instructions
+====================
+
+The following instructions will show how to get the software up and running.
+
+```
+# Install the OK repositories which contain okconfig
+rpm -ihv http://opensource.is/repo/ok-release.rpm
+yum install okconfig
+
+# If not using standard nagios paths (for example if using icinga) you need to
+# edit okconfig.conf so that it points to your icinga.cfg
+vim /etc/okconfig.conf
+
+# Go to a directory of your choice and download the latest set of scripts
+# from github
+yum install -y git
+cd /opt
+git clone https://github.com/palli/deployment-agents
 ```
 
 Deploying a nagios agent to a remote server
