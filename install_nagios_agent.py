@@ -116,5 +116,7 @@ if __name__ == '__main__':
         main()
     except paramiko.AuthenticationException:
         error("Authentication failed")
+    except SystemExit:
+        pass
     except Exception, e:
         error(str(e), json_data={'error_type': type(e)})
