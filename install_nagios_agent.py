@@ -31,8 +31,9 @@ import paramiko
 argmap = {}
 argmap['x01'] = 'username'
 argmap['x02'] = 'password'
-argmap['x03'] = 'not used'
+argmap['x03'] = 'domain'
 argmap['x04'] = 'host'
+argmap['x06'] = 'platform'
 
 
 def main():
@@ -41,10 +42,19 @@ def main():
     remote_host = arguments.get('host') or usage('remote host was not provided')
     username = arguments.get('username') or usage('username was not provided')
     password = arguments.get('password') or usage('password was not provided')
+    domain = arguments.get('domain', None)
+    platform = arguments.get('platform', None)
+    install_method = None
+    if 'linux' in platform:
+        install_method = 'ssh'
+    elif 'windows' in platform:
+        install_method = 'winexe'
     status, stdout, stderr = okconfig.install_okagent(
         remote_host=remote_host,
         username=username,
         password=password,
+        domain=domain,
+        install_method=install_method,
     )
     if status == 0:
         success(stdout)
@@ -106,8 +116,9 @@ def usage(message=None):
     print """
 x01: Username used to log into remote server
 x02: Password used to log into remote server
-x03: Not used
+x03: Domain name
 x04: Hostname or IP Address of remote host to deploy on
+x06: Platform (either windows or linux)
     """
     sys.exit(0)
 
